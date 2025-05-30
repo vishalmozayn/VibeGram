@@ -1,0 +1,137 @@
+{% load static %}
+<aside x-show="mobileSidebarOpen" x-cloak class="sidebar relative md:!block col-span-full md:col-span-1 lg:mr-[20%] order-1 md:order-2"
+x-transition:enter="duration-300 ease-out"
+x-transition:enter-start="opacity-0 -mt-96 "
+x-transition:enter-end="opacity-100 mt-0 ">
+<div class="sidebar-content lg:w-80 pb-8">
+<section class="card p-4">
+    <div class="flex items-center">
+      <img class="w-7 mr-2 -mt-3" src="{%   static 'images/category_icon.svg'%}"/>
+      <h2 class="titleBlip font1">Categories</h2>
+    </div>
+        <ul class="hoverlist ">
+            {% for category in  categories %}
+            <li class=" {% if category.slug == tag.slug %}  highlight {% endif %}">
+                <a href="{% url "category" category.slug %}">
+                    <img class="w-8 h-8 object-cover mr-2" src="{{ category.image.url }}">
+                    <span class="font-bold text-sm">{{ category.name }}</span></a></li>
+            {% endfor %}
+        </ul>
+</section>  
+<section class="card p-4">
+    <div class="flex items-center">
+      <img class="w-7 mr-2 -mt-3" src="{%   static 'images/fireheart_black.svg'%}"/>
+      <h2 class="titleBlip font1">Top Posts</h2>
+    </div>
+    <ul class="hoverlist">
+        {% for post  in top_posts %}
+        <li>
+           <a href="{% url "post" post.id %}" class=" flex items-stretch justify-between">
+             <div class="flex items-center truncate"> 
+               <img class="w-10 h-10 rounded-lg object-cover mr-3 shrink-0" src="{{post.image}}">
+               {% if post.author %}
+               <img class="w-6 h-6 rounded-full object-cover mr-1" src="{{ post.author.profile.avatar }}">
+               <span class="font-bold text-sm mr-1">{{post.author.username }}</span>
+               {% else %}
+               <img class="w-6 h-6 rounded-full object-cover mr-1" src="{%  static  'images/avatar_default.svg' %}">
+               <span class=" text-sm mr-1">no author</span>
+               {% endif %}
+             </div>
+             <span class=" {% if user in post.likes.all %}font-bold{% else %}font-light{% endif %} text-sm text-gray-500 shrink-0">{{ post.likes.count}} Like{{ post.likes.count|pluralize:'s'}} / {{post.comments.count }}</span>
+           </a>
+        </li>
+        {% endfor %}
+    </ul>   
+</section>
+<section class="card p-4">
+    <div class="flex items-center">
+       <img class="w-7 mr-2 -mt-3" src="{%   static 'images/fireheart_black.svg'%}"/>
+       <h2 class="titleBlip font1">Top Comments</h2>
+    </div>
+    <ul class="hoverlist">
+        {% for comment in top_comments  %}
+        <li>
+        <a href="{% url "post" comment.parent_post.id %}" class="flex items-stretch justify-between">
+            <div class="flex items-center truncate">
+                {% if comment.author %}
+                <img class="w-6 h-6 rounded-full object-cover mr-1" src="{{ comment.author.profile.avatar}}">
+                {% else %}
+                <img class="w-6 h-6 rounded-full object-cover mr-1" src="{% static 'images/avatar_default.svg' %}">
+                {% endif %}
+                <span class="font-bold text-sm mr-1 truncate"> {% if comment.author %}{{ comment.author.username}}{% else %}<span class="font-light">no author</span>{% endif %} : {{comment.body|truncatechars:10}}</span>
+            </div>
+            <span class=" {% if user in comment.likes.all %}font-bold{% else %}font-light{% endif %} text-sm text-gray-500 shrink-0">{{comment.likes.count}} Like{{comment.likes.count|pluralize:'s'}} / {{comment.replies.count}}</span>
+        </a>
+        </li>
+        {% endfor %}
+    </ul>   
+</section>
+
+<section class="card p-4">
+    <ul>
+        <li class="mb-2">
+            <a href="https://github.com/vishalmozayn" target="_blank" class="flex items-center">
+                <div class="w-8 mr-2 flex justify-center">
+                    <img class="w-6"  src="https://img.icons8.com/glyph-neue/64/github.png" alt="github">
+                </div>
+                <span class="hover:bg-gray-800 hover:rounded-full hover:px-4 hover:py-3 hover:-ml-2 hover:text-white transition-all">Github</span>
+            </a>
+        </li>
+        <li class="mb-2">
+            <a href="https://www.linkedin.com/in/vishalmore123/" class="flex items-center">
+                <div class="w-8 mr-2 flex justify-center">
+                    <img class="w-6"  src="https://img.icons8.com/ios-filled/50/linkedin.png" alt="linkedin"/>
+                </div>                        
+                <span class="hover:bg-gray-800 hover:rounded-full hover:px-4 hover:py-3 hover:-ml-2 hover:text-white transition-all">Linkedin</span>
+            </a>
+        </li>
+        <li class="mb-2">
+            <a href="/about" class="flex items-center">
+                <div class="w-8 mr-2 flex justify-center ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                    </svg>  
+                </div>                        
+                <span class="hover:bg-gray-800 hover:rounded-full hover:px-4 hover:py-3 hover:-ml-2 hover:text-white transition-all">About</span>
+            </a>
+        </li>
+
+</section>
+
+
+</div>
+<script>
+            
+    let sidebar = document.getElementsByClassName('sidebar')[0];
+    let sidebar_content = document.getElementsByClassName('sidebar-content')[0];
+    let body = document.body;
+    var postpage = "";
+    
+    if (!postpage) {
+        if (window.innerWidth >= 768) {
+            window.onscroll = () => {
+                let scrollTop = window.scrollY;
+                let viewportHeight = window.innerHeight;
+                let contentHeight = sidebar_content.getBoundingClientRect().height;
+                let sidebarTop = sidebar.getBoundingClientRect().top + window.pageYOffset;
+                let threshold = contentHeight - viewportHeight + sidebarTop;
+
+                if(scrollTop >= threshold) {
+                    sidebar_content.style.transform = `translateY(-${contentHeight - viewportHeight + sidebarTop}px)`;
+                    sidebar_content.style.position = 'fixed';
+                    body.classList.remove("bg-zinc-100");
+                    body.classList.add("bg-gray-900");
+                }
+                else {
+                    sidebar_content.style.transform = "";
+                    sidebar_content.style.position = "";
+                    body.classList.add("bg-zinc-100");
+                    body.classList.remove("bg-gray-900");
+                }
+            }
+        }
+    }
+
+</script>
+</aside>
+
