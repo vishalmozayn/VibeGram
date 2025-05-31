@@ -171,7 +171,14 @@ MEDIA_URL = 'media/'
 
 
 if ENVIROMENT =='production' or POSTGRES_LOCALLY == True:
-    DEFAULT_FILE_STORAGE= 'cloudinary_storage.storage.MediaCloudinaryStorage'
+  STORAGES= {
+    "default":{
+        "BACKEND":"cloudinary_storage.storage.MediaCloudinaryStorage",
+            },
+    "staticfiles": {
+        "BACKEND":"django.contrib.staticfiles.storage.StaticFilesStorage",
+           },
+   }
 else:
     MEDIA_ROOT = BASE_DIR / 'media'
     
