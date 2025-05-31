@@ -36,7 +36,6 @@ def update_user(sender,instance,created,**kwargs):
     if created == False:
         user = get_object_or_404(User, id=profile.user.id)
         if user.email != profile.email:
-            
            user.email = profile.email
            user.save()
         
