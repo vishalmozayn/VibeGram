@@ -124,7 +124,7 @@ DATABASES = {
     }
 }
 
-POSTGRES_LOCALLY = False
+POSTGRES_LOCALLY = True
 if ENVIROMENT =='production' or POSTGRES_LOCALLY == True:
    DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
 
@@ -171,14 +171,14 @@ MEDIA_URL = 'media/'
 
 
 if ENVIROMENT =='production' or POSTGRES_LOCALLY == True:
-  STORAGES= {
-    "default":{
-        "BACKEND":"cloudinary_storage.storage.MediaCloudinaryStorage",
+   STORAGES= {
+      "default":{
+         "BACKEND":"cloudinary_storage.storage.MediaCloudinaryStorage",
             },
-    "staticfiles": {
-        "BACKEND":"django.contrib.staticfiles.storage.StaticFilesStorage",
+      "staticfiles": {
+         "BACKEND":"django.contrib.staticfiles.storage.StaticFilesStorage",
            },
-   }
+    }
 else:
     MEDIA_ROOT = BASE_DIR / 'media'
     
@@ -195,7 +195,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL='/'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+if ENVIROMENT =='production' or POSTGRES_LOCALLY == True:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_HOST_USER = env('EMAIL_ADDRESS')
+    EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = 'VibeGram {env("EMAIL_ADDRESS") }'
+    ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
+  
+else:
+  EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 
