@@ -124,7 +124,7 @@ DATABASES = {
     }
 }
 
-POSTGRES_LOCALLY = True
+POSTGRES_LOCALLY =False
 if ENVIROMENT =='production' or POSTGRES_LOCALLY == True:
    DATABASES['default'] = dj_database_url.parse(env('DATABASE_URL'))
 
@@ -203,11 +203,12 @@ if ENVIROMENT =='production' or POSTGRES_LOCALLY == True:
     EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    DEFAULT_FROM_EMAIL = 'VibeGram {env("EMAIL_ADDRESS") }'
+    DEFAULT_FROM_EMAIL = f'VibeGram {env("EMAIL_ADDRESS") }'
     ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
   
 else:
   EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 
