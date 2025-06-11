@@ -5,7 +5,7 @@
         <h1 class="font1 leading-none font-thin text-6xl title-fadein titleBlip">Welcome to VibeGram</h1>
         <p class="text-lg font-bold mb-5" >Where Creativity Meets Connection Share your favorite Photos from flicker and add a great caption</p>
         {% if not user.is_authenticated %}
-        <a class=" inline-block cursor-pointer bg-gray-800 hover:bg-black text-white font-bold text-lg rounded-full py-5 px-6 transition-all" href="{% url "account_signup" %}">Create Account</a>
+        <a class=" inline-block cursor-pointer bg-gray-800 hover:bg-black text-white font-bold text-lg rounded-full py-5 px-6 transition-all" href="{% url "account_signup" %}?next={% url "profile-onboarding" %}">Create Account</a>
         {% endif %}
       </div>
     </div>
