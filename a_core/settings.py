@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import dj_database_url
+import os
+from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qs
+load_dotenv()
 
 from environ import Env
 env = Env()
@@ -117,12 +121,50 @@ WSGI_APPLICATION = 'a_core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Add these at the top of your settings.py
+
+
+
+# Replace the DATABASES section of your settings.py with this
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    # Use DATABASE_URL for production or other environments
+    tmpPostgres = urlparse(DATABASE_URL)
+    options = dict(parse_qs(tmpPostgres.query))
+
+    # Convert list values to strings for channel_binding and sslmode
+    if 'sslmode' in options:
+        options['sslmode'] = options['sslmode'][0]
+    if 'channel_binding' in options:
+        options['channel_binding'] = options['channel_binding'][0]
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': tmpPostgres.path.lstrip('/'),
+            'USER': tmpPostgres.username,
+            'PASSWORD': tmpPostgres.password,
+            'HOST': tmpPostgres.hostname,
+            'PORT': tmpPostgres.port or 5432,
+            'OPTIONS': options,
+        }
     }
-}
+else:
+    # Fallback to SQLite for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+# Additional settings for Neon PostgreSQL
+if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
+    # Ensure SSL is required for Neon
+    DATABASES['default']['OPTIONS']['sslmode'] = 'require'
+
 
 POSTGRES_LOCALLY =False
 if ENVIROMENT =='production' or POSTGRES_LOCALLY == True:
