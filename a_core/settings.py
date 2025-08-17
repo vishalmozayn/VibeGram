@@ -14,7 +14,8 @@ from pathlib import Path
 import dj_database_url
 import os
 from dotenv import load_dotenv
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qsl
+
 load_dotenv()
 
 from environ import Env
@@ -127,43 +128,24 @@ WSGI_APPLICATION = 'a_core.wsgi.application'
 
 # Replace the DATABASES section of your settings.py with this
 
-DATABASE_URL = os.getenv("DATABASE_URL")
 
-if DATABASE_URL:
-    # Use DATABASE_URL for production or other environments
-    tmpPostgres = urlparse(DATABASE_URL)
-    options = dict(parse_qs(tmpPostgres.query))
 
-    # Convert list values to strings for channel_binding and sslmode
-    if 'sslmode' in options:
-        options['sslmode'] = options['sslmode'][0]
-    if 'channel_binding' in options:
-        options['channel_binding'] = options['channel_binding'][0]
+# Replace the DATABASES section of your settings.py with this
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': tmpPostgres.path.lstrip('/'),
-            'USER': tmpPostgres.username,
-            'PASSWORD': tmpPostgres.password,
-            'HOST': tmpPostgres.hostname,
-            'PORT': tmpPostgres.port or 5432,
-            'OPTIONS': options,
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path.replace('/', ''),
+        'USER': tmpPostgres.username,
+        'PASSWORD': tmpPostgres.password,
+        'HOST': tmpPostgres.hostname,
+        'PORT': 5432,
+        'OPTIONS': dict(parse_qsl(tmpPostgres.query)),
     }
-else:
-    # Fallback to SQLite for local development
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
-# Additional settings for Neon PostgreSQL
-if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
-    # Ensure SSL is required for Neon
-    DATABASES['default']['OPTIONS']['sslmode'] = 'require'
+
 
 
 POSTGRES_LOCALLY =False
